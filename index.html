@@ -3,77 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Click Counter</title>
+    <title>Counter App</title>
     <style>
-        /* Basic styling */
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            text-align: center;
+            margin-top: 50px;
         }
-        #counter-display {
-            font-size: 3rem;
-            margin-bottom: 20px;
+
+        #counterDisplay {
+            font-size: 2em;
+            margin-top: 20px;
         }
-        #increment-button {
+
+        #counterButton {
+            font-size: 1.5em;
             padding: 10px 20px;
-            font-size: 1.5rem;
-            color: #fff;
+            cursor: pointer;
             background-color: #4CAF50;
+            color: white;
             border: none;
             border-radius: 5px;
-            cursor: pointer;
         }
-        #increment-button:hover {
+
+        #counterButton:hover {
             background-color: #45a049;
         }
     </style>
 </head>
 <body>
-    <!-- Counter display -->
-    <div id="counter-display">Loading...</div>
-    <!-- Button to increment counter -->
-    <button id="increment-button">Click Me!</button>
+
+    <h1>Welcome to the Counter App</h1>
+
+    <!-- Display the counter value here -->
+    <div id="counterDisplay">Counter: 0</div>
+
+    <!-- Button to increment the counter -->
+    <button id="counterButton">Increment Counter</button>
 
     <script>
-        const counterDisplay = document.getElementById("counter-display");
-        const incrementButton = document.getElementById("increment-button");
-        const serverUrl = "http://localhost:3000"; // Change this to your server URL if deployed
+        const serverUrl = "https://just-a-button-lac.vercel.app"; // Replace with your actual Vercel URL
 
-        // Function to fetch and display the current counter value
-        async function fetchCounter() {
-            try {
-                const response = await fetch(`${serverUrl}/counter`);
-                const data = await response.json();
-                counterDisplay.textContent = data.counter;
-            } catch (error) {
-                console.error("Error fetching counter:", error);
-            }
+        // Function to get the current counter value from the backend
+        async function getCounter() {
+            const response = await fetch(`${serverUrl}/api/counter`);
+            const data = await response.json();
+            return data.counter;
         }
 
-        // Function to increment the counter on the server
+        // Function to increment the counter on the backend
         async function incrementCounter() {
-            try {
-                const response = await fetch(`${serverUrl}/increment`, {
-                    method: "POST"
-                });
-                const data = await response.json();
-                counterDisplay.textContent = data.counter;
-            } catch (error) {
-                console.error("Error incrementing counter:", error);
-            }
+            const response = await fetch(`${serverUrl}/api/increment`, {
+                method: 'POST',
+            });
+            const data = await response.json();
+            return data.counter;
         }
 
-        // Fetch counter value on page load
-        fetchCounter();
+        // When the button is clicked, increment the counter and update the display
+        document.getElementById('counterButton').addEventListener('click', async () => {
+            const newCount = await incrementCounter();
+            document.getElementById('counterDisplay').innerText = `Counter: ${newCount}`;
+        });
 
-        // Add click event listener to the button
-        incrementButton.addEventListener("click", incrementCounter);
+        // Initial load: fetch the current counter value and display it
+        (async () => {
+            const currentCount = await getCounter();
+            document.getElementById('counterDisplay').innerText = `Counter: ${currentCount}`;
+        })();
     </script>
+
 </body>
 </html>
