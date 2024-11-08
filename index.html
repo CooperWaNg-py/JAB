@@ -35,10 +35,8 @@
 
     <h1>Welcome to the Counter App</h1>
 
-    <!-- Display the counter value here -->
     <div id="counterDisplay">Counter: 0</div>
 
-    <!-- Button to increment the counter -->
     <button id="counterButton">Increment Counter</button>
 
     <script>
@@ -46,18 +44,38 @@
 
         // Function to get the current counter value from the backend
         async function getCounter() {
-            const response = await fetch(`${serverUrl}/api/counter`);
-            const data = await response.json();
-            return data.counter;
+            try {
+                const response = await fetch(`${serverUrl}/api/counter`);
+                const data = await response.json();
+                if (response.ok) {
+                    return data.counter;
+                } else {
+                    console.error("Failed to fetch counter:", data);
+                    return 0;
+                }
+            } catch (error) {
+                console.error("Error fetching counter:", error);
+                return 0;
+            }
         }
 
         // Function to increment the counter on the backend
         async function incrementCounter() {
-            const response = await fetch(`${serverUrl}/api/increment`, {
-                method: 'POST',
-            });
-            const data = await response.json();
-            return data.counter;
+            try {
+                const response = await fetch(`${serverUrl}/api/increment`, {
+                    method: 'POST',
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    return data.counter;
+                } else {
+                    console.error("Failed to increment counter:", data);
+                    return 0;
+                }
+            } catch (error) {
+                console.error("Error incrementing counter:", error);
+                return 0;
+            }
         }
 
         // When the button is clicked, increment the counter and update the display
